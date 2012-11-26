@@ -1,0 +1,6 @@
+*.pyc
+*.swp
+.*.un~
+*.zargo~
+.sass-cache
+.ropeproject
