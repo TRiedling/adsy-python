@@ -384,5 +384,4 @@ def do_bisect_step(state):
 	returncode     = proc.wait()
 	sys.stdout.write(stdout)
 	sys.stderr.write(stderr)
-	ereload()
 	return returncode
