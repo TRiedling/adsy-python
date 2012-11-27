@@ -3,7 +3,7 @@
 
 """IPython tools:
 
-print_html     : Prints tables and objects as html-tables.
+print_html     : Prints cursors, dicts and objects as html-tables.
 toggle input   : Hide input-boxes from notebooks. Use this with nbconvert.
 iterator tools : Filter None, swallow exception during iteration...
 do_bisect_step : If used with simple scripts and areload() you can automatically biscect
