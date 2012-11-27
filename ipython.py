@@ -59,33 +59,52 @@ def do_bisect_step(state):
 	ereload()
 	return returncode
 
-def html_settings():
+def extended_styles():
 	"""Call this once in your notebook or qtconsole."""
 	return HTML("""
 		<script type="text/javascript">
-			var inputInverval;
+		(function() {
+			var inputInterval;
 			var intervalCount = 0;
+			var init = false;
 			var inputUp = false;
 			function toggleInput() {
 				if(inputUp) {
 					$('.input').slideDown();
-					$('.code_cell').addClass('cell');
-					$('.code_cell').addClass('vbox');
+					$('.code_cell').attr('style', '');
 				}
 				else {
 					$('.input').slideUp();
-					$('.code_cell').removeClass('cell');
-					$('.code_cell').removeClass('vbox');
+					$('.code_cell').attr('style', 'padding: 0px; margin: 0px');
 				}
 				inputUp = !inputUp;
+				init = true;
 			}
-			function slideInputUp() {
+			function initExtendedStyles() {
 				if(intervalCount > 15) {
 					clearInterval(inputInterval);
 				}
 				intervalCount += 1;
-				if(inputUp == false) {
+				if(init == false) {
 					try {
+						var style = [
+'							<style type="text/css" id="extendedStyle">',
+'								table.nowrap td {',
+'									white-space: nowrap;',
+'								}',
+'								table.bound {',
+'									margin-right: 80px;',
+'								}',
+'								table.dataframe {',
+'									margin-right: 80px;',
+'								}',
+'							</style>'].join("\\n");
+						if($('#extendedStyle').length == 0) {
+							$('head').append(style);
+						}
+						else {
+							$('#extendedStyle').replaceWith(style);
+						}
 						// Only slideUp if we're not on notebook server
 						// meaning Print View and nbconverted
 						if($('#save_status').length == 0) {
@@ -102,22 +121,12 @@ def html_settings():
 				script.src = 'https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js';
 				document.body.appendChild(script);
 			}
-			$('head').append([
-'				<style type="text/css">',
-'					table.nowrap td {',
-'						white-space: nowrap;',
-'					}',
-'					table.bound {',
-'						margin-right: 80px;',
-'					}',
-'					table.dataframe {',
-'						margin-right: 80px;',
-'					}',
-'				</style>'].join("\\n"));
-			setTimeout(slideInputUp, 200);
+
+			setTimeout(initExtendedStyles, 200);
 			// jQuery is doing this interval trick
 			// I guess its the way to do it then.
-			inputInterval = setInterval(slideInputUp, 1000);
+			inputInterval = setInterval(initExtendedStyles, 1000);
+		}());
 		</script>
 		<a href="javascript:toggleInput()">Toggle Input</a>
 		""")
@@ -129,7 +138,9 @@ def print_html(data, tight=False, projection=None):
 	tight      : If used with dictonaries, do not textwrap and do not use <pre>.
 	projection : A list of fields to display (used for dicts only)"""
 
-	if hasattr(data, 'description') and hasattr(data, 'fetchall'):
+	if hasattr(data, 'to_html'):
+		return HTML(data.to_html())
+	elif hasattr(data, 'description') and hasattr(data, 'fetchall'):
 		return html_cursor(data)
 	elif hasattr(data, "__dict__"):
 		return html_dict(data.__dict__, tight, projection)
@@ -315,17 +326,28 @@ def whiteiter(func, data, *args, **kwargs):
 def solarized():
 	"""Solarized code mirror theme."""
 	html = """
-<style type="text/css">
-.cm-s-ipython { background-color: #002b36; color: #839496; }
-.cm-s-ipython span.cm-keyword {color: #859900; font-weight: bold;}
-.cm-s-ipython span.cm-number {color: #b58900;}
-.cm-s-ipython span.cm-operator {color: #268bd2; font-weight: bold;}
-.cm-s-ipython span.cm-meta {color: #cb4b16;}
-.cm-s-ipython span.cm-comment {color: #586e75; font-style: italic;}
-.cm-s-ipython span.cm-string {color: #2aa198;}
-.cm-s-ipython span.cm-error {color: #dc322f;}
-.cm-s-ipython span.cm-builtin {color: #cb4b16;}
-.cm-s-ipython span.cm-variable {color: #839496;}
-</style>"""
+		<script type="text/javascript">
+		jQuery(function($){
+			var solarizedStyle = [
+'			<style type="text/css" id="solarizedStyle">',
+'			.cm-s-ipython { background-color: #002b36; color: #839496; }',
+'			.cm-s-ipython span.cm-keyword {color: #859900; font-weight: bold;}',
+'			.cm-s-ipython span.cm-number {color: #b58900;}',
+'			.cm-s-ipython span.cm-operator {color: #268bd2; font-weight: bold;}',
+'			.cm-s-ipython span.cm-meta {color: #cb4b16;}',
+'			.cm-s-ipython span.cm-comment {color: #586e75; font-style: italic;}',
+'			.cm-s-ipython span.cm-string {color: #2aa198;}',
+'			.cm-s-ipython span.cm-error {color: #dc322f;}',
+'			.cm-s-ipython span.cm-builtin {color: #cb4b16;}',
+'			.cm-s-ipython span.cm-variable {color: #839496;}',
+'			</style>'].join('\\n');
+			if($('#solarizedStyle').length == 0) {
+				$('head').append(solarizedStyle);
+			}
+			else {
+				$('#solarizedStyle').replaceWith(solarizedStyle);
+			}
+		});
+		</script>"""
 	return HTML(html)
 
