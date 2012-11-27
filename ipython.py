@@ -62,17 +62,6 @@ def do_bisect_step(state):
 def html_settings():
 	"""Call this once in your notebook or qtconsole."""
 	return HTML("""
-		<style type="text/css">
-			table.nowrap td {
-				white-space:nowrap;
-			}
-			table.bound {
-				margin-right: 80px;
-			}
-			table.dataframe {
-				margin-right: 80px;
-			}
-		</style>
 		<script type="text/javascript">
 			var inputInverval;
 			var intervalCount = 0;
@@ -113,13 +102,24 @@ def html_settings():
 				script.src = 'https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js';
 				document.body.appendChild(script);
 			}
+			$('head').append([
+'				<style type="text/css">',
+'					table.nowrap td {',
+'						white-space: nowrap;',
+'					}',
+'					table.bound {',
+'						margin-right: 80px;',
+'					}',
+'					table.dataframe {',
+'						margin-right: 80px;',
+'					}',
+'				</style>'].join("\\n"));
 			setTimeout(slideInputUp, 200);
 			// jQuery is doing this interval trick
 			// I guess its the way to do it then.
 			inputInterval = setInterval(slideInputUp, 1000);
 		</script>
 		<a href="javascript:toggleInput()">Toggle Input</a>
-
 		""")
 
 def print_html(data, tight=False, projection=None):
