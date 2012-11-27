@@ -1,6 +1,15 @@
 #!/usr/bin/python2
 # coding: utf-8
 
+"""IPython tools:
+
+print_html     : Prints tables and objects as html-tables
+toggle input   : Hide input-boxes from notebooks. Use this with nbconvert.
+iterator tools : Filter None, swallow exception during iteration...
+do_bisect_step : If used with simple scripts and areload() you can automatically biscect
+
+"""
+
 # Copyright (c) 2012, Adfinis SyGroup AG
 # All rights reserved.
 #
@@ -33,42 +42,18 @@ import sys
 from textwrap import wrap
 from pprint import pformat
 
-def areload():
-	"""Enable autoreload. Might be buggy!"""
-	get_ipython().magic('load_ext autoreload')
-	get_ipython().magic('autoreload 2')
-
-def do_bisect_step(state):
-	"""Calls git bisect with the information from test/test_with_regex
-
-	state: True: test was ok -> False: test failed"""
-	str_state = 'bad'
-	if state == True:
-		str_state = 'good'
-	proc = subprocess.Popen(
-		 ['git', 'bisect', str_state],
-		 stdout = subprocess.PIPE,
-		 stderr = subprocess.PIPE,
-		 stdin  = subprocess.PIPE
-	)
-
-	stdout, stderr = proc.communicate()
-	returncode     = proc.wait()
-	sys.stdout.write(stdout)
-	sys.stderr.write(stderr)
-	ereload()
-	return returncode
-
 def extended_styles():
-	"""Call this once in your notebook or qtconsole."""
+	"""Injects styles and scripts for print_html and toggle input into a
+	ipython notebook."""
 	return HTML("""
 		<script type="text/javascript">
+		var toggleInput;
 		(function() {
 			var inputInterval;
 			var intervalCount = 0;
 			var init = false;
 			var inputUp = false;
-			function toggleInput() {
+			toggleInput = function() {
 				if(inputUp) {
 					$('.input').slideDown();
 					$('.code_cell').attr('style', '');
@@ -131,8 +116,13 @@ def extended_styles():
 		<a href="javascript:toggleInput()">Toggle Input</a>
 		""")
 
+# Prints sql cursors and dictionaries as html-tables, sub dictionaries are
+# pprinted and line-wrapped to a width of 80 chars. Please note that wrapped
+# lines will have the prefix $.
+# Call extended_styles() once in your notebook or qtconsole.
+
 def print_html(data, tight=False, projection=None):
-	"""Pretty prints database-API cursor, dicts or objects, fallback to pprint.
+	"""Prints database-API cursor, dicts or objects as html, fallback to pprint.
 
 	data       : The data to pretty print.
 	tight      : If used with dictonaries, do not textwrap and do not use <pre>.
@@ -292,6 +282,34 @@ def html_multi_dict(array_, tight=False, projection=None):
 	output += ["</table>"]
 	return HTML('\n'.join(output))
 
+def solarized():
+	"""Solarized code mirror theme."""
+	html = """
+		<script type="text/javascript">
+		jQuery(function($){
+			var solarizedStyle = [
+'			<style type="text/css" id="solarizedStyle">',
+'			.cm-s-ipython { background-color: #002b36; color: #839496; }',
+'			.cm-s-ipython span.cm-keyword {color: #859900; font-weight: bold;}',
+'			.cm-s-ipython span.cm-number {color: #b58900;}',
+'			.cm-s-ipython span.cm-operator {color: #268bd2; font-weight: bold;}',
+'			.cm-s-ipython span.cm-meta {color: #cb4b16;}',
+'			.cm-s-ipython span.cm-comment {color: #586e75; font-style: italic;}',
+'			.cm-s-ipython span.cm-string {color: #2aa198;}',
+'			.cm-s-ipython span.cm-error {color: #dc322f;}',
+'			.cm-s-ipython span.cm-builtin {color: #cb4b16;}',
+'			.cm-s-ipython span.cm-variable {color: #839496;}',
+'			</style>'].join('\\n');
+			if($('#solarizedStyle').length == 0) {
+				$('head').append(solarizedStyle);
+			}
+			else {
+				$('#solarizedStyle').replaceWith(solarizedStyle);
+			}
+		});
+		</script>"""
+	return HTML(html)
+
 def blackhole(func, *args, **kwargs):
 	"""Ignores any errors from the function func"""
 	try:
@@ -323,31 +341,28 @@ def whiteiter(func, data, *args, **kwargs):
 			print(pprint_wrap(x))
 			traceback.print_exc()
 
-def solarized():
-	"""Solarized code mirror theme."""
-	html = """
-		<script type="text/javascript">
-		jQuery(function($){
-			var solarizedStyle = [
-'			<style type="text/css" id="solarizedStyle">',
-'			.cm-s-ipython { background-color: #002b36; color: #839496; }',
-'			.cm-s-ipython span.cm-keyword {color: #859900; font-weight: bold;}',
-'			.cm-s-ipython span.cm-number {color: #b58900;}',
-'			.cm-s-ipython span.cm-operator {color: #268bd2; font-weight: bold;}',
-'			.cm-s-ipython span.cm-meta {color: #cb4b16;}',
-'			.cm-s-ipython span.cm-comment {color: #586e75; font-style: italic;}',
-'			.cm-s-ipython span.cm-string {color: #2aa198;}',
-'			.cm-s-ipython span.cm-error {color: #dc322f;}',
-'			.cm-s-ipython span.cm-builtin {color: #cb4b16;}',
-'			.cm-s-ipython span.cm-variable {color: #839496;}',
-'			</style>'].join('\\n');
-			if($('#solarizedStyle').length == 0) {
-				$('head').append(solarizedStyle);
-			}
-			else {
-				$('#solarizedStyle').replaceWith(solarizedStyle);
-			}
-		});
-		</script>"""
-	return HTML(html)
+def areload():
+	"""Enable autoreload. Might be buggy!"""
+	get_ipython().magic('load_ext autoreload')
+	get_ipython().magic('autoreload 2')
 
+def do_bisect_step(state):
+	"""Calls git bisect with the information from test/test_with_regex
+
+	state: True: test was ok -> False: test failed"""
+	str_state = 'bad'
+	if state == True:
+		str_state = 'good'
+	proc = subprocess.Popen(
+		 ['git', 'bisect', str_state],
+		 stdout = subprocess.PIPE,
+		 stderr = subprocess.PIPE,
+		 stdin  = subprocess.PIPE
+	)
+
+	stdout, stderr = proc.communicate()
+	returncode     = proc.wait()
+	sys.stdout.write(stdout)
+	sys.stderr.write(stderr)
+	ereload()
+	return returncode
