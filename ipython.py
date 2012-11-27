@@ -367,7 +367,7 @@ def areload():
 	get_ipython().magic('autoreload 2')
 
 def do_bisect_step(state):
-	"""Calls git bisect with the information from test/test_with_regex
+	"""Calls git bisect with the information from a test
 
 	state: True: test was ok -> False: test failed"""
 	str_state = 'bad'
