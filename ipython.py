@@ -70,9 +70,8 @@ def extended_styles():
 					clearInterval(inputInterval);
 				}
 				intervalCount += 1;
-				if(init == false) {
-					try {
-						var style = [
+				try {
+					var style = [
 '							<style type="text/css" id="extendedStyle">',
 '								table.nowrap td {',
 '									white-space: nowrap;',
@@ -84,20 +83,19 @@ def extended_styles():
 '									margin-right: 80px;',
 '								}',
 '							</style>'].join("\\n");
-						if($('#extendedStyle').length == 0) {
-							$('head').append(style);
-						}
-						else {
-							$('#extendedStyle').replaceWith(style);
-						}
-						// Only slideUp if we're not on notebook server
-						// meaning Print View and nbconverted
-						if($('#save_status').length == 0) {
-							toggleInput();
-						}
-						clearInterval(inputInterval);
-					} catch(e) {}
-				}
+					if($('#extendedStyle').length == 0) {
+						$('head').append(style);
+					}
+					else {
+						$('#extendedStyle').replaceWith(style);
+					}
+					// Only slideUp if we're not on notebook server
+					// meaning Print View and nbconverted
+					if($('#save_status').length == 0 && init == false) {
+						toggleInput();
+					}
+					clearInterval(inputInterval);
+				} catch(e) {}
 			}
 			if (typeof jQuery == 'undefined') {
 				// if jQuery Library is not loaded
