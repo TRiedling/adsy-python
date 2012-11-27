@@ -3,7 +3,7 @@
 
 """IPython tools:
 
-print_html     : Prints tables and objects as html-tables
+print_html     : Prints tables and objects as html-tables.
 toggle input   : Hide input-boxes from notebooks. Use this with nbconvert.
 iterator tools : Filter None, swallow exception during iteration...
 do_bisect_step : If used with simple scripts and areload() you can automatically biscect
@@ -115,6 +115,17 @@ def extended_styles():
 		</script>
 		<a href="javascript:toggleInput()">Toggle Input</a>
 		""")
+
+def remove_extended_styles():
+	"""Removes solarized theme."""
+	html = """
+		<script type="text/javascript">
+		jQuery(function($){
+			$('#extendedStyle').replaceWith('');
+		});
+		</script>"""
+	return HTML(html)
+
 
 # Prints sql cursors and dictionaries as html-tables, sub dictionaries are
 # pprinted and line-wrapped to a width of 80 chars. Please note that wrapped
@@ -309,6 +320,17 @@ def solarized():
 		});
 		</script>"""
 	return HTML(html)
+
+def remove_solarized():
+	"""Removes solarized theme."""
+	html = """
+		<script type="text/javascript">
+		jQuery(function($){
+			$('#solarizedStyle').replaceWith('');
+		});
+		</script>"""
+	return HTML(html)
+
 
 def blackhole(func, *args, **kwargs):
 	"""Ignores any errors from the function func"""
