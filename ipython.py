@@ -69,6 +69,9 @@ def html_settings():
 			table.bound {
 				margin-right: 80px;
 			}
+			table.dataframe {
+				margin-right: 80px;
+			}
 		</style>
 		<script type="text/javascript">
 			var inputInverval;
