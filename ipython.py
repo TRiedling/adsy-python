@@ -55,12 +55,12 @@ def extended_styles():
 			var inputUp = false;
 			toggleInput = function() {
 				if(inputUp) {
-					$('.input').slideDown();
-					$('.code_cell').attr('style', '');
+					$('div.input').slideDown();
+					$('div.code_cell').attr('style', '');
 				}
 				else {
-					$('.input').slideUp();
-					$('.code_cell').attr('style', 'padding: 0px; margin: 0px');
+					$('div.input').slideUp();
+					$('div.code_cell').attr('style', 'padding: 0px; margin: 0px');
 				}
 				inputUp = !inputUp;
 				init = true;
