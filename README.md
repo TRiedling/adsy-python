@@ -7,8 +7,8 @@ List of tools
 ---------------
 
 * ipython table tools
-** display cursors and multidicts as tables
-** wrap and pretty print other data
+  * display cursors and multidicts as tables
+  * wrap and pretty print other data
 * ipython hide input
-** nbconvert your ipython notebooks and hide the input
-** useful when sending notebooks to non-programmers
+  * nbconvert your ipython notebooks and hide the input
+  * useful when sending notebooks to non-programmers
