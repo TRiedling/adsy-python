@@ -9,6 +9,6 @@ List of tools
 * ipython notebook display tools
   * display cursors and multidicts as tables
   * wrap and pretty print other data
-* ipython hide input
+* ipython notebook hide input
   * nbconvert your ipython notebooks and hide the input
   * useful when sending notebooks to non-programmers
