@@ -6,7 +6,7 @@ Adfinis-Sygroup Python Tools is the typical inhomogeneous collection of helpers 
 List of tools
 ---------------
 
-* ipython table tools
+* ipython notebook display tools
   * display cursors and multidicts as tables
   * wrap and pretty print other data
 * ipython hide input
