@@ -35,33 +35,14 @@ do_bisect_step : If used with simple scripts and areload() you can automatically
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import subprocess
-import sys
+
 
 from adsy.iterator import *
 from adsy.display import *
+from adsy.bisect import *
 
 def areload():
-	"""Enable autoreload. Might be buggy!"""
-	get_ipython().magic('load_ext autoreload')
-	get_ipython().magic('autoreload 2')
+    """Enable autoreload. Might be buggy!"""
+    get_ipython().magic('load_ext autoreload')
+    get_ipython().magic('autoreload 2')
 
-def do_bisect_step(state):
-	"""Calls git bisect with the information from a test
-
-	state: True: test was ok -> False: test failed"""
-	str_state = 'bad'
-	if state == True:
-		str_state = 'good'
-	proc = subprocess.Popen(
-		 ['git', 'bisect', str_state],
-		 stdout = subprocess.PIPE,
-		 stderr = subprocess.PIPE,
-		 stdin  = subprocess.PIPE
-	)
-
-	stdout, stderr = proc.communicate()
-	returncode     = proc.wait()
-	sys.stdout.write(stdout)
-	sys.stderr.write(stderr)
-	return returncode

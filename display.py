@@ -36,296 +36,296 @@ from textwrap import wrap
 from pprint import pformat
 
 def extended_styles():
-	"""Injects styles and scripts for print_html and toggle input into a
-	ipython notebook."""
-	return HTML("""
-		<script type="text/javascript">
-		var toggleInput;
-		(function() {
-			var inputInterval;
-			var intervalCount = 0;
-			var init = false;
-			var inputUp = false;
-			toggleInput = function() {
-				if(inputUp) {
-					$('div.input').slideDown();
-					$('div.code_cell').attr('style', '');
-				}
-				else {
-					$('div.input').slideUp();
-					$('div.code_cell').attr('style', 'padding: 0px; margin: 0px');
-				}
-				inputUp = !inputUp;
-				init = true;
-			}
-			function initExtendedStyles() {
-				if(intervalCount > 15) {
-					clearInterval(inputInterval);
-				}
-				intervalCount += 1;
-				try {
-					var style = [
-'							<style type="text/css" id="extendedStyle">',
-'								table.nowrap td {',
-'									white-space: nowrap;',
-'								}',
-'								table.bound {',
-'									margin-right: 80px;',
-'								}',
-'								table.dataframe {',
-'									margin-right: 80px;',
-'								}',
-'							</style>'].join("\\n");
-					if($('#extendedStyle').length == 0) {
-						$('head').append(style);
-					}
-					else {
-						$('#extendedStyle').replaceWith(style);
-					}
-					// Only slideUp if we're not on notebook server
-					// meaning Print View and nbconverted
-					if($('#save_status').length == 0 && init == false) {
-						toggleInput();
-					}
-					clearInterval(inputInterval);
-				} catch(e) {}
-			}
-			if (typeof jQuery == 'undefined') {
-				// if jQuery Library is not loaded
-				var script = document.createElement( 'script' );
-				script.type = 'text/javascript';
-				script.src = 'https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js';
-				document.body.appendChild(script);
-			}
+    """Injects styles and scripts for print_html and toggle input into a
+    ipython notebook."""
+    return HTML("""
+        <script type="text/javascript">
+        var toggleInput;
+        (function() {
+            var inputInterval;
+            var intervalCount = 0;
+            var init = false;
+            var inputUp = false;
+            toggleInput = function() {
+                if(inputUp) {
+                    $('div.input').slideDown();
+                    $('div.code_cell').attr('style', '');
+                }
+                else {
+                    $('div.input').slideUp();
+                    $('div.code_cell').attr('style', 'padding: 0px; margin: 0px');
+                }
+                inputUp = !inputUp;
+                init = true;
+            }
+            function initExtendedStyles() {
+                if(intervalCount > 15) {
+                    clearInterval(inputInterval);
+                }
+                intervalCount += 1;
+                try {
+                    var style = [
+'                           <style type="text/css" id="extendedStyle">',
+'                               table.nowrap td {',
+'                                   white-space: nowrap;',
+'                               }',
+'                               table.bound {',
+'                                   margin-right: 80px;',
+'                               }',
+'                               table.dataframe {',
+'                                   margin-right: 80px;',
+'                               }',
+'                           </style>'].join("\\n");
+                    if($('#extendedStyle').length == 0) {
+                        $('head').append(style);
+                    }
+                    else {
+                        $('#extendedStyle').replaceWith(style);
+                    }
+                    // Only slideUp if we're not on notebook server
+                    // meaning Print View and nbconverted
+                    if($('#save_status').length == 0 && init == false) {
+                        toggleInput();
+                    }
+                    clearInterval(inputInterval);
+                } catch(e) {}
+            }
+            if (typeof jQuery == 'undefined') {
+                // if jQuery Library is not loaded
+                var script = document.createElement( 'script' );
+                script.type = 'text/javascript';
+                script.src = 'https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js';
+                document.body.appendChild(script);
+            }
 
-			setTimeout(initExtendedStyles, 200);
-			// jQuery is doing this interval trick
-			// I guess its the way to do it then.
-			inputInterval = setInterval(initExtendedStyles, 1000);
-		}());
-		</script>
-		<a href="javascript:toggleInput()">Toggle Input</a>
-		""")
+            setTimeout(initExtendedStyles, 200);
+            // jQuery is doing this interval trick
+            // I guess its the way to do it then.
+            inputInterval = setInterval(initExtendedStyles, 1000);
+        }());
+        </script>
+        <a href="javascript:toggleInput()">Toggle Input</a>
+        """)
 
 def remove_extended_styles():
-	"""Removes solarized theme."""
-	html = """
-		<script type="text/javascript">
-		jQuery(function($){
-			$('#extendedStyle').replaceWith('');
-		});
-		</script>"""
-	return HTML(html)
+    """Removes solarized theme."""
+    html = """
+        <script type="text/javascript">
+        jQuery(function($){
+            $('#extendedStyle').replaceWith('');
+        });
+        </script>"""
+    return HTML(html)
 
 
 def display_html(data, tight=False, projection=None):
-	"""Displays database-API cursor, dicts or objects as html, fallback to pprint.
+    """Displays database-API cursor, dicts or objects as html, fallback to pprint.
 
-	Short cut: dh()
+    Short cut: dh()
 
-	data       : The data to display.
-	tight      : If used with dictonaries, do not textwrap and do not use <pre>.
-	projection : A list of fields to display (used for dicts only)
-	
-	
-	Display sql cursors and dictionaries as html-tables, sub dictionaries are
-	pprinted and line-wrapped to a width of 80 chars. Please note that wrapped
-	lines will have the prefix $.
-	Call extended_styles() once in your notebook or qtconsole.
+    data       : The data to display.
+    tight      : If used with dictonaries, do not textwrap and do not use <pre>.
+    projection : A list of fields to display (used for dicts only)
+    
+    
+    Display sql cursors and dictionaries as html-tables, sub dictionaries are
+    pprinted and line-wrapped to a width of 80 chars. Please note that wrapped
+    lines will have the prefix $.
+    Call extended_styles() once in your notebook or qtconsole.
 
-	"""
+    """
 
-	if hasattr(data, 'to_html'):
-		return HTML(data.to_html())
-	elif hasattr(data, 'description') and hasattr(data, 'fetchall'):
-		return html_cursor(data)
-	elif hasattr(data, "__dict__"):
-		return html_dict(data.__dict__, tight, projection)
-	elif str(data.__class__) == "<type 'dict'>":
-		return html_dict(data, tight, projection)
-	elif str(data.__class__) == "<class 'dict'>":
-		return html_dict(data, tight, projection)
-	elif (
-		str(data.__class__) == "<class 'list'>"
-	or
-		str(data.__class__) == "<type 'list'>"
-	):
-		if len(data) > 0:
-			if (
-				str(data[0].__class__) == "<class 'dict'>"
-			or
-				str(data[0].__class__) == "<type 'dict'>"
-			):
-				return html_multi_dict(data, tight, projection)
-	return html_pprint(data)
+    if hasattr(data, 'to_html'):
+        return HTML(data.to_html())
+    elif hasattr(data, 'description') and hasattr(data, 'fetchall'):
+        return html_cursor(data)
+    elif hasattr(data, "__dict__"):
+        return html_dict(data.__dict__, tight, projection)
+    elif str(data.__class__) == "<type 'dict'>":
+        return html_dict(data, tight, projection)
+    elif str(data.__class__) == "<class 'dict'>":
+        return html_dict(data, tight, projection)
+    elif (
+        str(data.__class__) == "<class 'list'>"
+    or
+        str(data.__class__) == "<type 'list'>"
+    ):
+        if len(data) > 0:
+            if (
+                str(data[0].__class__) == "<class 'dict'>"
+            or
+                str(data[0].__class__) == "<type 'dict'>"
+            ):
+                return html_multi_dict(data, tight, projection)
+    return html_pprint(data)
 
 dh = display_html
 
 def pprint_wrap(data):
-	"""Pretty print and wrap the data."""
-	return enc('\n'.join(['\n$'.join(wrap(x, width=80))
-			for x in pformat(data).split('\n')]))
+    """Pretty print and wrap the data."""
+    return enc('\n'.join(['\n$'.join(wrap(x, width=80))
+            for x in pformat(data).split('\n')]))
 
 def html_pprint(data):
-	return HTML('\n'.join([
-		"<pre>",
-		pprint_wrap(data),
-		"</pre>"]))
+    return HTML('\n'.join([
+        "<pre>",
+        pprint_wrap(data),
+        "</pre>"]))
 
 def _enc_v2(value):
-	return unicode(value).replace(
-		'&',
-		'&amp;'
-	).replace(
-		'<',
-		'&lt;'
-	).replace(
-		'>',
-		'&gt;'
-	)
+    return unicode(value).replace(
+        '&',
+        '&amp;'
+    ).replace(
+        '<',
+        '&lt;'
+    ).replace(
+        '>',
+        '&gt;'
+    )
 
 def _enc_v3(value):
-	return str(value).replace(
-		'&',
-		'&amp;'
-	).replace(
-		'<',
-		'&lt;'
-	).replace(
-		'>',
-		'&gt;'
-	)
+    return str(value).replace(
+        '&',
+        '&amp;'
+    ).replace(
+        '<',
+        '&lt;'
+    ).replace(
+        '>',
+        '&gt;'
+    )
 
 if sys.version_info[0] == 2:
-	enc = _enc_v2
+    enc = _enc_v2
 else:
-	enc = _enc_v3
+    enc = _enc_v3
 
 
 def html_cursor(cursor):
-	"""Pretty prints a generic database API cursor."""
-	if cursor.description is None:
-		display_html(HTML("<i>No data returned</i>"))
-		return
-	headers = [x[0] for x in cursor.description]
-	header_line = "<tr><th>" + ("</th><th>".join(headers)) + "</th></tr>"
-	def getrow(row):
-		rendered = ["<tr>"]+["<td>%s</td>" % enc(row[col]) for col in
-			range(0, len(headers))]+["</tr>"]
-		return "".join(rendered)
-	rows = [header_line] + [getrow(row) for row in cursor]
-	body = '\n'.join(rows)
-	table = '<table class="nowrap">\n%s\n</table>' % body
-	return HTML(table)
+    """Pretty prints a generic database API cursor."""
+    if cursor.description is None:
+        display_html(HTML("<i>No data returned</i>"))
+        return
+    headers = [x[0] for x in cursor.description]
+    header_line = "<tr><th>" + ("</th><th>".join(headers)) + "</th></tr>"
+    def getrow(row):
+        rendered = ["<tr>"]+["<td>%s</td>" % enc(row[col]) for col in
+            range(0, len(headers))]+["</tr>"]
+        return "".join(rendered)
+    rows = [header_line] + [getrow(row) for row in cursor]
+    body = '\n'.join(rows)
+    table = '<table class="nowrap">\n%s\n</table>' % body
+    return HTML(table)
 
 def _table_config(tight):
-	if tight:
-		output = ['<table class="bound"><tr>']
-		td_start = "<td>"
-		td_end   = "</td>"
-		print_function = enc
-	else:
-		output = ['<table class="nowrap"><tr>']
-		td_start = "<td><pre>"
-		td_end   = "</pre></td>"
-		print_function = pprint_wrap
-	return (
-		output,
-		td_start,
-		td_end,
-		print_function
-	)
+    if tight:
+        output = ['<table class="bound"><tr>']
+        td_start = "<td>"
+        td_end   = "</td>"
+        print_function = enc
+    else:
+        output = ['<table class="nowrap"><tr>']
+        td_start = "<td><pre>"
+        td_end   = "</pre></td>"
+        print_function = pprint_wrap
+    return (
+        output,
+        td_start,
+        td_end,
+        print_function
+    )
 
 def html_dict(dict_, tight=False, projection=None):
-	"""Pretty print a dictionary.
+    """Pretty print a dictionary.
 
-	dict_      : The dict to pretty print.
-	tight      : Do not textwrap and do not use <pre>.
-	projection : A list of fields to display"""
-	(
-		output,
-		td_start,
-		td_end,
-		print_function
-	) = _table_config(tight)
+    dict_      : The dict to pretty print.
+    tight      : Do not textwrap and do not use <pre>.
+    projection : A list of fields to display"""
+    (
+        output,
+        td_start,
+        td_end,
+        print_function
+    ) = _table_config(tight)
 
-	fields = None
-	if projection == None:
-		fields = dict_
-	else:
-		fields = projection
-	for key in fields:
-		output += ["<th>", key, "</th>"]
-	output += ["</tr><tr>"]
-	for key in fields:
-		output += [td_start, print_function(dict_[key]), td_end]
-	output += ["</table>"]
-	return HTML('\n'.join(output))
+    fields = None
+    if projection == None:
+        fields = dict_
+    else:
+        fields = projection
+    for key in fields:
+        output += ["<th>", key, "</th>"]
+    output += ["</tr><tr>"]
+    for key in fields:
+        output += [td_start, print_function(dict_[key]), td_end]
+    output += ["</table>"]
+    return HTML('\n'.join(output))
 
 def html_multi_dict(array_, tight=False, projection=None):
-	"""Pretty print an array of dictionaries.
+    """Pretty print an array of dictionaries.
 
-	array_     : The multi dict to pretty print.
-	tight      : Do not textwrap and do not use <pre>.
-	projection : A list of fields to display"""
-	(
-		output,
-		td_start,
-		td_end,
-		print_function
-	) = _table_config(tight)
-	fields = None
-	if projection == None:
-		fields = array_[0]
-	else:
-		fields = projection
-	if len(array_) < 1:
-		return HTML("")
-	for key in fields:
-		output += ["<th>", key, "</th>"]
-	for dict_ in array_:
-		output += ['<tr>']
-		for key in fields:
-			output += [td_start, print_function(dict_[key]), td_end]
-		output += ['</tr>']
-	output += ["</table>"]
-	return HTML('\n'.join(output))
+    array_     : The multi dict to pretty print.
+    tight      : Do not textwrap and do not use <pre>.
+    projection : A list of fields to display"""
+    (
+        output,
+        td_start,
+        td_end,
+        print_function
+    ) = _table_config(tight)
+    fields = None
+    if projection == None:
+        fields = array_[0]
+    else:
+        fields = projection
+    if len(array_) < 1:
+        return HTML("")
+    for key in fields:
+        output += ["<th>", key, "</th>"]
+    for dict_ in array_:
+        output += ['<tr>']
+        for key in fields:
+            output += [td_start, print_function(dict_[key]), td_end]
+        output += ['</tr>']
+    output += ["</table>"]
+    return HTML('\n'.join(output))
 
 def solarized():
-	"""Injects solarized code mirror theme."""
-	html = """
-		<script type="text/javascript">
-		jQuery(function($){
-			var solarizedStyle = [
-'			<style type="text/css" id="solarizedStyle">',
-'			.cm-s-ipython { background-color: #002b36; color: #839496; }',
-'			.cm-s-ipython span.cm-keyword {color: #859900; font-weight: bold;}',
-'			.cm-s-ipython span.cm-number {color: #b58900;}',
-'			.cm-s-ipython span.cm-operator {color: #268bd2; font-weight: bold;}',
-'			.cm-s-ipython span.cm-meta {color: #cb4b16;}',
-'			.cm-s-ipython span.cm-comment {color: #586e75; font-style: italic;}',
-'			.cm-s-ipython span.cm-string {color: #2aa198;}',
-'			.cm-s-ipython span.cm-error {color: #dc322f;}',
-'			.cm-s-ipython span.cm-builtin {color: #cb4b16;}',
-'			.cm-s-ipython span.cm-variable {color: #839496;}',
-'			</style>'].join('\\n');
-			if($('#solarizedStyle').length == 0) {
-				$('head').append(solarizedStyle);
-			}
-			else {
-				$('#solarizedStyle').replaceWith(solarizedStyle);
-			}
-		});
-		</script>"""
-	return HTML(html)
+    """Injects solarized code mirror theme."""
+    html = """
+        <script type="text/javascript">
+        jQuery(function($){
+            var solarizedStyle = [
+'           <style type="text/css" id="solarizedStyle">',
+'           .cm-s-ipython { background-color: #002b36; color: #839496; }',
+'           .cm-s-ipython span.cm-keyword {color: #859900; font-weight: bold;}',
+'           .cm-s-ipython span.cm-number {color: #b58900;}',
+'           .cm-s-ipython span.cm-operator {color: #268bd2; font-weight: bold;}',
+'           .cm-s-ipython span.cm-meta {color: #cb4b16;}',
+'           .cm-s-ipython span.cm-comment {color: #586e75; font-style: italic;}',
+'           .cm-s-ipython span.cm-string {color: #2aa198;}',
+'           .cm-s-ipython span.cm-error {color: #dc322f;}',
+'           .cm-s-ipython span.cm-builtin {color: #cb4b16;}',
+'           .cm-s-ipython span.cm-variable {color: #839496;}',
+'           </style>'].join('\\n');
+            if($('#solarizedStyle').length == 0) {
+                $('head').append(solarizedStyle);
+            }
+            else {
+                $('#solarizedStyle').replaceWith(solarizedStyle);
+            }
+        });
+        </script>"""
+    return HTML(html)
 
 def remove_solarized():
-	"""Removes solarized theme."""
-	html = """
-		<script type="text/javascript">
-		jQuery(function($){
-			$('#solarizedStyle').replaceWith('');
-		});
-		</script>"""
-	return HTML(html)
+    """Removes solarized theme."""
+    html = """
+        <script type="text/javascript">
+        jQuery(function($){
+            $('#solarizedStyle').replaceWith('');
+        });
+        </script>"""
+    return HTML(html)
 
