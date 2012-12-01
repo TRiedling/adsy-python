@@ -38,8 +38,8 @@ do_bisect_step : If used with simple scripts and areload() you can automatically
 import subprocess
 import sys
 
-from iterator import *
-from display import *
+from adsy.iterator import *
+from adsy.display import *
 
 def areload():
 	"""Enable autoreload. Might be buggy!"""
