@@ -1,7 +1,7 @@
 #!/usr/bin/python2
 # coding: utf-8
 
-"""Edubs import module"""
+"""Adsy-Python tools"""
 
 # Copyright (c) 2012, Adfinis SyGroup AG
 # All rights reserved.

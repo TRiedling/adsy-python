@@ -1,13 +1,8 @@
 #!/usr/bin/python2
 # coding: utf-8
 
-"""IPython tools:
-
-print_html     : Prints cursors, dicts and objects as html-tables.
-toggle input   : Hide input-boxes from notebooks. Use this with nbconvert.
-iterator tools : Filter None, swallow exception during iteration...
-do_bisect_step : If used with simple scripts and areload() you can automatically biscect
-
+"""
+Filter None, swallow exception during iteration...
 """
 
 # Copyright (c) 2012, Adfinis SyGroup AG
@@ -35,33 +30,35 @@ do_bisect_step : If used with simple scripts and areload() you can automatically
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import subprocess
-import sys
+import traceback
 
-from iterator import *
-from display import *
+def blackhole(func, *args, **kwargs):
+	"""Ignores any errors from the function func"""
+	try:
+		return func(*args, **kwargs)
+	except:
+		return None
 
-def areload():
-	"""Enable autoreload. Might be buggy!"""
-	get_ipython().magic('load_ext autoreload')
-	get_ipython().magic('autoreload 2')
+def filter_none(data):
+	"""Filters all None entry of a list/iterator"""
+	for x in data:
+		if x is not None:
+			yield x
 
-def do_bisect_step(state):
-	"""Calls git bisect with the information from a test
+def blackiter(func, data, *args, **kwargs):
+	"""Like list comprehension but ignores execeptions"""
+	for x in data:
+		try:
+			yield func(x, *args, **kwargs)
+		except:
+			pass
 
-	state: True: test was ok -> False: test failed"""
-	str_state = 'bad'
-	if state == True:
-		str_state = 'good'
-	proc = subprocess.Popen(
-		 ['git', 'bisect', str_state],
-		 stdout = subprocess.PIPE,
-		 stderr = subprocess.PIPE,
-		 stdin  = subprocess.PIPE
-	)
-
-	stdout, stderr = proc.communicate()
-	returncode     = proc.wait()
-	sys.stdout.write(stdout)
-	sys.stderr.write(stderr)
-	return returncode
+def whiteiter(func, data, *args, **kwargs):
+	'''Like list comprehension but ignores and logs execeptions'''
+	for x in data:
+		try:
+			yield func(x, *args, **kwargs)
+		except Exception as e:
+			print("Error in record:")
+			print(pprint_wrap(x))
+			traceback.print_exc()
