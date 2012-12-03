@@ -35,10 +35,12 @@ import sys
 from textwrap import wrap
 from pprint import pformat
 
-def extended_styles():
+def extended_styles(style=False):
     """Injects styles and scripts for print_html and toggle input into a
-    ipython notebook."""
-    return HTML("""
+    ipython notebook.
+
+    style: Inject table style for nbconvert (not needed for blogger-html)"""
+    pre = """
         <script type="text/javascript">
         var toggleInput;
         (function() {
@@ -63,7 +65,8 @@ def extended_styles():
                     clearInterval(inputInterval);
                 }
                 intervalCount += 1;
-                try {
+                try {"""
+    middle = """
                     var style = [
 '                           <style type="text/css" id="extendedStyle">',
 '                               table.nowrap td {',
@@ -81,7 +84,8 @@ def extended_styles():
                     }
                     else {
                         $('#extendedStyle').replaceWith(style);
-                    }
+                    }"""
+    post = """
                     // Only slideUp if we're not on notebook server
                     // meaning Print View and nbconverted
                     if($('#save_status').length == 0 && init == false) {
@@ -105,7 +109,11 @@ def extended_styles():
         }());
         </script>
         <a href="javascript:toggleInput()">Toggle Input</a>
-        """)
+        """
+    if style:
+        return HTML("".join([pre, middle, post]))
+    else:
+        return HTML("".join([pre, post]))
 
 def remove_extended_styles():
     """Removes solarized theme."""
@@ -126,8 +134,8 @@ def display_html(data, tight=False, projection=None):
     data       : The data to display.
     tight      : If used with dictonaries, do not textwrap and do not use <pre>.
     projection : A list of fields to display (used for dicts only)
-    
-    
+
+
     Display sql cursors and dictionaries as html-tables, sub dictionaries are
     pprinted and line-wrapped to a width of 80 chars. Please note that wrapped
     lines will have the prefix $.
