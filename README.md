@@ -7,7 +7,7 @@ Installation
 ------------
 
 1. cd to a location in your PYTHONPATH. (ie subdirectory of your app)
-2. git://github.com/adfinis-sygroup/adsy-python.git adsy
+2. git clone git://github.com/adfinis-sygroup/adsy-python.git adsy
 
 The code is python 2.6, 2.7 and 3.x compatible
 
