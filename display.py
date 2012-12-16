@@ -30,10 +30,11 @@ Display cursors, dicts and objects as html-tables.
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from IPython.core.display import HTML, display_html
+import IPython.core.display as ipdisp
 import sys
 from textwrap import wrap
 from pprint import pformat
+
 
 def extended_styles(style=False):
     """Injects styles and scripts for print_html and toggle input into a
@@ -111,9 +112,10 @@ def extended_styles(style=False):
         <a href="javascript:toggleInput()">Toggle Input</a>
         """
     if style:
-        return HTML("".join([pre, middle, post]))
+        return ipdisp.HTML("".join([pre, middle, post]))
     else:
-        return HTML("".join([pre, post]))
+        return ipdisp.HTML("".join([pre, post]))
+
 
 def remove_extended_styles():
     """Removes solarized theme."""
@@ -123,7 +125,7 @@ def remove_extended_styles():
             $('#extendedStyle').replaceWith('');
         });
         </script>"""
-    return HTML(html)
+    return ipdisp.HTML(html)
 
 
 def display_html(data, tight=False, projection=None):
@@ -144,7 +146,7 @@ def display_html(data, tight=False, projection=None):
     """
 
     if hasattr(data, 'to_html'):
-        return HTML(data.to_html())
+        return ipdisp.HTML(data.to_html())
     elif hasattr(data, 'description') and hasattr(data, 'fetchall'):
         return html_cursor(data)
     elif hasattr(data, "__dict__"):
@@ -155,13 +157,13 @@ def display_html(data, tight=False, projection=None):
         return html_dict(data, tight, projection)
     elif (
         str(data.__class__) == "<class 'list'>"
-    or
+        or
         str(data.__class__) == "<type 'list'>"
     ):
         if len(data) > 0:
             if (
                 str(data[0].__class__) == "<class 'dict'>"
-            or
+                or
                 str(data[0].__class__) == "<type 'dict'>"
             ):
                 return html_multi_dict(data, tight, projection)
@@ -169,16 +171,19 @@ def display_html(data, tight=False, projection=None):
 
 dh = display_html
 
+
 def pprint_wrap(data):
     """Pretty print and wrap the data."""
     return enc('\n'.join(['\n$'.join(wrap(x, width=80))
-            for x in pformat(data).split('\n')]))
+               for x in pformat(data).split('\n')]))
+
 
 def html_pprint(data):
-    return HTML('\n'.join([
+    return ipdisp.HTML('\n'.join([
         "<pre>",
         pprint_wrap(data),
         "</pre>"]))
+
 
 def _enc_v2(value):
     return unicode(value).replace(
@@ -191,6 +196,7 @@ def _enc_v2(value):
         '>',
         '&gt;'
     )
+
 
 def _enc_v3(value):
     return str(value).replace(
@@ -213,18 +219,21 @@ else:
 def html_cursor(cursor):
     """Pretty prints a generic database API cursor."""
     if cursor.description is None:
-        display_html(HTML("<i>No data returned</i>"))
+        ipdisp.display_html(ipdisp.HTML("<i>No data returned</i>"))
         return
     headers = [x[0] for x in cursor.description]
     header_line = "<tr><th>" + ("</th><th>".join(headers)) + "</th></tr>"
+
     def getrow(row):
-        rendered = ["<tr>"]+["<td>%s</td>" % enc(row[col]) for col in
-            range(0, len(headers))]+["</tr>"]
+        rendered = ["<tr>"] + ["<td>%s</td>" % enc(row[col])
+                   for col in range(0, len(headers))] + ["</tr>"]
         return "".join(rendered)
+
     rows = [header_line] + [getrow(row) for row in cursor]
     body = '\n'.join(rows)
     table = '<table class="nowrap">\n%s\n</table>' % body
-    return HTML(table)
+    return ipdisp.HTML(table)
+
 
 def _table_config(tight):
     if tight:
@@ -244,6 +253,7 @@ def _table_config(tight):
         print_function
     )
 
+
 def html_dict(dict_, tight=False, projection=None):
     """Pretty print a dictionary.
 
@@ -258,7 +268,7 @@ def html_dict(dict_, tight=False, projection=None):
     ) = _table_config(tight)
 
     fields = None
-    if projection == None:
+    if projection is None:
         fields = dict_
     else:
         fields = projection
@@ -268,7 +278,8 @@ def html_dict(dict_, tight=False, projection=None):
     for key in fields:
         output += [td_start, print_function(dict_[key]), td_end]
     output += ["</table>"]
-    return HTML('\n'.join(output))
+    return ipdisp.HTML('\n'.join(output))
+
 
 def html_multi_dict(array_, tight=False, projection=None):
     """Pretty print an array of dictionaries.
@@ -283,12 +294,12 @@ def html_multi_dict(array_, tight=False, projection=None):
         print_function
     ) = _table_config(tight)
     fields = None
-    if projection == None:
+    if projection is None:
         fields = array_[0]
     else:
         fields = projection
     if len(array_) < 1:
-        return HTML("")
+        return ipdisp.HTML("")
     for key in fields:
         output += ["<th>", key, "</th>"]
     for dict_ in array_:
@@ -297,7 +308,8 @@ def html_multi_dict(array_, tight=False, projection=None):
             output += [td_start, print_function(dict_[key]), td_end]
         output += ['</tr>']
     output += ["</table>"]
-    return HTML('\n'.join(output))
+    return ipdisp.HTML('\n'.join(output))
+
 
 def solarized():
     """Injects solarized code mirror theme."""
@@ -325,7 +337,8 @@ def solarized():
             }
         });
         </script>"""
-    return HTML(html)
+    return ipdisp.HTML(html)
+
 
 def remove_solarized():
     """Removes solarized theme."""
@@ -335,5 +348,4 @@ def remove_solarized():
             $('#solarizedStyle').replaceWith('');
         });
         </script>"""
-    return HTML(html)
-
+    return ipdisp.HTML(html)
