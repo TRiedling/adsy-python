@@ -31,6 +31,8 @@ Filter None, swallow exception during iteration...
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import traceback
+from adsy.ipython import pprint_wrap
+
 
 def blackhole(func, *args, **kwargs):
     """Ignores any errors from the function func"""
@@ -39,11 +41,13 @@ def blackhole(func, *args, **kwargs):
     except:
         return None
 
+
 def filter_none(data):
     """Filters all None entry of a list/iterator"""
     for x in data:
         if x is not None:
             yield x
+
 
 def blackiter(func, data, *args, **kwargs):
     """Like list comprehension but ignores execeptions"""
@@ -53,12 +57,13 @@ def blackiter(func, data, *args, **kwargs):
         except:
             pass
 
+
 def whiteiter(func, data, *args, **kwargs):
     '''Like list comprehension but ignores and logs execeptions'''
     for x in data:
         try:
             yield func(x, *args, **kwargs)
-        except Exception as e:
+        except Exception:
             print("Error in record:")
             print(pprint_wrap(x))
             traceback.print_exc()

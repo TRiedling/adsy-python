@@ -36,13 +36,12 @@ do_bisect_step : If used with simple scripts and areload() you can automatically
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-
 from adsy.iterator import *
 from adsy.display import *
 from adsy.bisect import *
+
 
 def areload():
     """Enable autoreload. Might be buggy!"""
     get_ipython().magic('load_ext autoreload')
     get_ipython().magic('autoreload 2')
-

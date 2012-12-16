@@ -33,18 +33,19 @@ If used with simple scripts and areload() you can automatically biscect.
 import subprocess
 import sys
 
+
 def do_bisect_step(state):
     """Calls git bisect with the information from a test
 
     state: True: test was ok -> False: test failed"""
     str_state = 'bad'
-    if state == True:
+    if state is True:
         str_state = 'good'
     proc = subprocess.Popen(
-         ['git', 'bisect', str_state],
-         stdout = subprocess.PIPE,
-         stderr = subprocess.PIPE,
-         stdin  = subprocess.PIPE
+        ['git', 'bisect', str_state],
+        stdout = subprocess.PIPE,
+        stderr = subprocess.PIPE,
+        stdin  = subprocess.PIPE
     )
 
     stdout, stderr = proc.communicate()
