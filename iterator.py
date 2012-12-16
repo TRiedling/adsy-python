@@ -31,7 +31,7 @@ Filter None, swallow exception during iteration...
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import traceback
-from adsy.ipython import pprint_wrap
+from adsy.display import pprint_wrap
 
 
 def blackhole(func, *args, **kwargs):
