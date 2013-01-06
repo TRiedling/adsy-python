@@ -127,7 +127,6 @@ def shade_patches(ax):
         patch.set_agg_filter(shadow_filter)
 
 def shadow_filter(image, dpi):
-    global obj
     # Get the shape of the image
     nx, ny, depth = image.shape
     # Create a mash grid
