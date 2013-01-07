@@ -32,13 +32,14 @@ metallic_pie: Enhance a piechart to a metallic look
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import division
 from matplotlib.artist import Artist
 import matplotlib.font_manager as fm
 import matplotlib.colors as mc
 import numpy as np
 
-
 # from http://matplotlib.org/examples/pylab_examples/demo_agg_filter.html
+
 
 class FilteredArtistList(Artist):
     def __init__(self, artist_list, filter):
@@ -64,7 +65,7 @@ def smooth1d(x, window_len):
         2 * x[-1] - x[-1:-window_len:-1]
     ]
     w = np.hanning(window_len)
-    y = np.convolve(w / w.sum(), s, mode = 'same')
+    y = np.convolve(w / w.sum(), s, mode='same')
     return y[window_len - 1:-window_len + 1]
 
 
@@ -128,7 +129,7 @@ class OffsetFilter(BaseFilter):
         a2 = np.roll(
             a1,
             -int(oy / 72. * dpi),
-            axis = 0
+            axis=0
         )
         return a2
 
@@ -172,6 +173,7 @@ class DropShadowFilter(BaseFilter):
         return t2
 
 # end from: http://matplotlib.org/examples/pylab_examples/demo_agg_filter.html
+
 
 def dark_edges(ax):
     # Iterate over the patches in the axes
