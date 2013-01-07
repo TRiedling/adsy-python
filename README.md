@@ -24,3 +24,4 @@ List of tools
 * Helpful tools for ipython notebooks (contains everything above)
   * Also contains a method to enable autoreload
   * A helper for automatic git bisect
+* tools to enhance the look of matplotlib charts (plotenhance.py)
