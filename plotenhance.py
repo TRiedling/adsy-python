@@ -176,6 +176,9 @@ class DropShadowFilter(BaseFilter):
 
 
 def dark_edges(ax):
+    """Changes all patches of a axes to use dark edges.
+
+    ax (matplotlib.axes.Axes): the ax to change"""
     # Iterate over the patches in the axes
     for patch in ax.patches:
         # Get the facecolor of the patch
@@ -185,21 +188,31 @@ def dark_edges(ax):
         patch.set_linewidth(1.4)
 
 
-def change_fonts(ax):
+def change_fonts(ax, size=18):
+    """Changes all texts of a axes to use bigger font.
+
+    ax (matplotlib.axes.Axes): the ax to change"""
     # Load a font family
-    prop = fm.FontProperties(family=['Arial'], size=18)
+    prop = fm.FontProperties(family=['Arial', 'Bitstream Vera Sans'], size=size)
     # Set it to all texts in the axes
     for text in ax.texts:
         text.set_fontproperties(prop)
 
 
 def shade_patches(ax):
+    """Applies the shadow_filter to all patches.
+
+    ax (matplotlib.axes.Axes): the ax to change"""
     # Set our custom shadow_filter for all patches in the axes
     for patch in ax.patches:
         patch.set_agg_filter(shadow_filter)
 
 
 def shadow_filter(image, dpi):
+    """This filter creates a metallic look on patches.
+
+    image : the image of the patch
+    dpi   : the resultion of the patch"""
     # Get the shape of the image
     nx, ny, depth = image.shape
     # Create a mash grid
@@ -228,6 +241,9 @@ def shadow_filter(image, dpi):
 
 
 def metallic_pie(ax):
+    """Applies the metallic look to a pie chart
+
+    ax (matplotlib.axes.Axes): the ax to change"""
     # We draw all the the patches again,
     # this time with the drop-shadow filter
     shadow = FilteredArtistList(
