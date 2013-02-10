@@ -37,11 +37,13 @@ from textwrap import wrap
 from pprint import pformat
 
 
-def extended_styles(style=False):
+def extended_styles(css=False):
     """Injects styles and scripts for print_html and toggle input into a
     ipython notebook.
 
-    style: Inject table style for nbconvert (not needed for blogger-html)"""
+    css: Inject table css-styles for pre-wrapped tables content and nbconvert
+            display fixes.
+    """
     pre = """
         <script type="text/javascript">
         var toggleInput;
@@ -110,9 +112,9 @@ def extended_styles(style=False):
             inputInterval = setInterval(initExtendedStyles, 1000);
         }());
         </script>
-        <a href="javascript:toggleInput()">Toggle Input</a>
+       css<a href="javascript:toggleInput()">Toggle Input</a>
         """
-    if style:
+    if css:
         return ipdisp.HTML("".join([pre, middle, post]))
     else:
         return ipdisp.HTML("".join([pre, post]))
