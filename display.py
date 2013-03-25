@@ -112,7 +112,7 @@ def extended_styles(css=False):
             inputInterval = setInterval(initExtendedStyles, 1000);
         }());
         </script>
-       css<a href="javascript:toggleInput()">Toggle Input</a>
+       <a href="javascript:toggleInput()">Toggle Input</a>
         """
     if css:
         return ipdisp.HTML("".join([pre, middle, post]))
