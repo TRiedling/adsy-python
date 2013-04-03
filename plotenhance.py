@@ -35,11 +35,20 @@ metallic_pie: Enhance a piechart to a metallic look
 
 from __future__ import division
 from matplotlib.artist import Artist
+import matplotlib.mlab as mlab
 import matplotlib.font_manager as fm
 import matplotlib.colors as mc
 import numpy as np
+import colorsys
 
 # from http://matplotlib.org/examples/pylab_examples/demo_agg_filter.html
+
+
+plot_colors = [
+    mc.rgb2hex(colorsys.hsv_to_rgb(x, 0.58, 1))
+    for x in mlab.frange(0, 1, 0.05)
+]
+plot_colors = plot_colors[0::2] + plot_colors[1::2]
 
 
 class FilteredArtistList(Artist):
@@ -241,7 +250,7 @@ def shadow_filter(image, dpi):
     return image, 0, 0
 
 
-def metallic_pie(ax):
+def metallic_pie(ax, size=18):
     """Applies the metallic look to a pie chart
 
     ax (matplotlib.axes.Axes): the ax to change"""
@@ -262,4 +271,4 @@ def metallic_pie(ax):
     # Add a shade to the patches
     shade_patches(ax)
     # Change the font
-    change_fonts(ax)
+    change_fonts(ax, size=size)
